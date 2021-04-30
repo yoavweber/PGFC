@@ -13,9 +13,14 @@ import (
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/ipfs/interface-go-ipfs-core/path"
+	"github.com/libp2p/go-libp2p-core/peer"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
+	ma "github.com/multiformats/go-multiaddr"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 const repoPath = "./.ipfs/"
@@ -38,6 +43,35 @@ func main() {
 	key, _ := node.Key().Self(ctx)
 	fmt.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
 
+	var bootstrapNodes = []string {
+		"/ip4/10.212.137.178/tcp/4001/p2p/12D3KooWDHfFVgZqgRBQRDkYVm9hV8KE6EiaDLTgobHWYn7M62tq",
+	}
+
+	go connectToPeers(ctx, node, bootstrapNodes)
+
+
+	/*
+
+	cid := "QmRJE9bXiKrR3EZSmw9xYC1dGL8oK5NjTYkCGATw4Gq8rn"
+
+	filePath, err := getContent(cid, node, ctx)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
+
+
+
+	 */
+
+	/*
+	// Peer list
+	var list []icore.ConnectionInfo
+	list, _ = node.Swarm().Peers(ctx)
+	fmt.Println(list)
+	*/
+
+
 	addContentPath := contentPath + "test.txt"
 	cid, err := addContent(addContentPath, node, ctx)
 	if err != nil {
@@ -45,25 +79,14 @@ func main() {
 	}
 	fmt.Println("Content added with CID: " + cid)
 
+
 	filePath, err := getContent(cid, node, ctx)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Content with CID: " + cid +  "\nreceived and written to " + filePath)
-
-
-	/*
-
-	// Peer list
-	var list []icore.ConnectionInfo
-	list, _ = node.Swarm().Peers(ctx)
-	fmt.Println(list)
-
-	 */
-
+	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
 
 }
-
 
 // Spawns a node
 func spawnNode(ctx context.Context) (icore.CoreAPI, error) {
@@ -152,7 +175,6 @@ func createNode(ctx context.Context, repo repo.Repo) (icore.CoreAPI, error) {
 	return coreapi.NewCoreAPI(node)
 }
 
-
 func addContent(filePath string, node icore.CoreAPI, ctx context.Context) (string, error) {
 
 	someFile, err := getUnixfsNode(filePath)
@@ -224,7 +246,39 @@ func addBootstrap(addresses []string) error {
 	} else {
 		return fmt.Errorf("cannot add bootstrap to an uninitialized node")
 	}
-	
+
 }
 
+func connectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) error {
+	var wg sync.WaitGroup
+	peerInfos := make(map[peer.ID]*peerstore.PeerInfo, len(peers))
+	for _, addrStr := range peers {
+		addr, err := ma.NewMultiaddr(addrStr)
+		if err != nil {
+			return err
+		}
+		pii, err := peerstore.InfoFromP2pAddr(addr)
+		if err != nil {
+			return err
+		}
+		pi, ok := peerInfos[pii.ID]
+		if !ok {
+			pi = &peerstore.PeerInfo{ID: pii.ID}
+			peerInfos[pi.ID] = pi
+		}
+		pi.Addrs = append(pi.Addrs, pii.Addrs...)
+	}
 
+	wg.Add(len(peerInfos))
+	for _, peerInfo := range peerInfos {
+		go func(peerInfo *peerstore.PeerInfo) {
+			defer wg.Done()
+			err := ipfs.Swarm().Connect(ctx, *peerInfo)
+			if err != nil {
+				log.Printf("failed to connect to %s: %s", peerInfo.ID, err)
+			}
+		}(peerInfo)
+	}
+	wg.Wait()
+	return nil
+}

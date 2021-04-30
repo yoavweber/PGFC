@@ -15,7 +15,9 @@
     ]
   },
   "AutoNAT": {},
-  "Bootstrap": null,
+  "Bootstrap": [
+    "/ip4/10.212.137.178/tcp/4001/p2p/12D3KooWDHfFVgZqgRBQRDkYVm9hV8KE6EiaDLTgobHWYn7M62tq"
+  ],
   "Datastore": {
     "BloomFilterSize": 0,
     "GCPeriod": "1h",
