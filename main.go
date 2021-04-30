@@ -4,17 +4,22 @@ import (
 	"context"
 	"fmt"
 	config "github.com/ipfs/go-ipfs-config"
+	files "github.com/ipfs/go-ipfs-files"
 	"github.com/ipfs/go-ipfs/core"
 	"github.com/ipfs/go-ipfs/core/coreapi"
 	"github.com/ipfs/go-ipfs/core/node/libp2p"
 	"github.com/ipfs/go-ipfs/plugin/loader"
+	"github.com/ipfs/go-ipfs/repo"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
+	"github.com/ipfs/interface-go-ipfs-core/path"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
-const repoPath = "./.ipfs"
+const repoPath = "./.ipfs/"
+const contentPath = "./content/"
 
 func main() {
 
@@ -32,6 +37,20 @@ func main() {
 	fmt.Println("Node spawned on " + repoPath + "\nIdentity information:")
 	key, _ := node.Key().Self(ctx)
 	fmt.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
+
+	addContentPath := contentPath + "test.txt"
+	cid, err := addContent(addContentPath, node, ctx)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Content added with CID: " + cid)
+
+	filePath, err := getContent(cid, node, ctx)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Content with CID: " + cid +  "\nreceived and written to " + filePath)
+
 
 	/*
 
@@ -60,8 +79,14 @@ func spawnNode(ctx context.Context) (icore.CoreAPI, error) {
 		}
 	}
 
+	// Opens the repo
+	nodeRepo, err := fsrepo.Open(repoPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open repo on node creation: %s", err)
+	}
+
 	// Spawns an IPFS node
-	return createNode(ctx, repoPath)
+	return createNode(ctx, nodeRepo)
 
 }
 
@@ -106,13 +131,7 @@ func repoInit() error {
 }
 
 // Creates an IPFS node and returns its coreAPI
-func createNode(ctx context.Context, repoPath string) (icore.CoreAPI, error) {
-
-	// Opens the repo
-	repo, err := fsrepo.Open(repoPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open repo on node creation: %s", err)
-	}
+func createNode(ctx context.Context, repo repo.Repo) (icore.CoreAPI, error) {
 
 	// Build configurations of the node
 	nodeOptions := &core.BuildCfg{
@@ -132,3 +151,80 @@ func createNode(ctx context.Context, repoPath string) (icore.CoreAPI, error) {
 	// Attach the Core API to the constructed node
 	return coreapi.NewCoreAPI(node)
 }
+
+
+func addContent(filePath string, node icore.CoreAPI, ctx context.Context) (string, error) {
+
+	someFile, err := getUnixfsNode(filePath)
+	if err != nil {
+		return "", fmt.Errorf("could not get File: %s", err)
+	}
+
+	cidFile, err := node.Unixfs().Add(ctx, someFile)
+	if err != nil {
+		return "", fmt.Errorf("could not add File: %s", err)
+	}
+
+	return cidFile.Cid().String(), nil
+}
+
+func getUnixfsNode(path string) (files.Node, error) {
+	st, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+
+	f, err := files.NewSerialFile(path, false, st)
+	if err != nil {
+		return nil, err
+	}
+
+	return f, nil
+}
+
+func getContent(cid string, node icore.CoreAPI, ctx context.Context) (string, error) {
+
+	var cidPath = path.New(cid)
+	outputPath := contentPath + cid // File output path
+
+	fileNode, err := node.Unixfs().Get(ctx, cidPath) // Gets the node associated with the CID given
+	if err != nil {
+		return "", fmt.Errorf("could not get file with CID: %s", err)
+	}
+
+	err = files.WriteTo(fileNode, outputPath) // Writes fetched file to output path
+	if err != nil {
+		return "", fmt.Errorf("could not write out the fetched CID: %s", err)
+	}
+
+	return outputPath, nil // returns output path
+}
+
+func addBootstrap(addresses []string) error {
+	if fsrepo.IsInitialized(repoPath) { // Checks if repo is initialized
+		nodeRepo, err := fsrepo.Open(repoPath) // Opens repo
+		if err != nil {
+			return fmt.Errorf("failed to open repo when adding bootstrap: %s", err)
+		}
+
+		var cfg *config.Config // Defines config file
+
+		cfg, err = nodeRepo.Config() // Receives current config
+		if err != nil {
+			return fmt.Errorf("failed to open repo when adding bootstrap: %s", err)
+		}
+
+		cfg.Bootstrap = append(cfg.Bootstrap, addresses...) // Appends bootstrap/s onto config
+
+		err = nodeRepo.SetConfig(cfg) // Sets current config with updated config
+		if err != nil {
+			return fmt.Errorf("failed to set config when adding bootstrap: %s", err)
+		}
+		return nil
+	} else {
+		return fmt.Errorf("cannot add bootstrap to an uninitialized node")
+	}
+	
+}
+
+
