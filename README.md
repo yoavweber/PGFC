@@ -25,10 +25,11 @@ This project is planned to be dockerized closer to due-date. More information co
 * Here goes what has been implemented, what has the group learned from the experience?
 ### What didn't go as expected
 * Here goes issues - what was hard (getting to know IPFS on a deep level was both challenging and rewarding + took a lot of time (way more than expected in the proposed timeframe), write a paragraph or two on this)
+* Some platform issues, we are a diverse group in terms of preferred OS. 1x Linux, 1x Windows, 1x macOS.
 ### The most challenging aspects
 * Here goes aspects of the project the group deemed most challenging.
 ### The learning outcome
-* What did we learn? IPFS being the obvious answer, but it may be worth adding stuff like interrogating a foreign repository to make it fit specialized needs. That sounds great.
+* What did we learn? IPFS being the obvious answer, but it may be worth adding stuff like interrogating a foreign repository to make it fit specialized needs.
 ### Total work hours
 For this project, a high focus on collaboration has been prioritized. For every week of the project period, the group has had 6-10 hours of collaborative work (usually 2-3 sessions per week). The sessions have mostly happened physically (on campus) and each session usually has had a specific purpose (some sprints, some commune problem solving). In addition to these teamwork-sessions, we also split some work, to increase the learning-outcome per individual group member. ----put some more later, but ground work has been laid ;)
 
