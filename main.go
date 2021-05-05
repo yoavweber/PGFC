@@ -72,6 +72,7 @@ func main() {
 	*/
 
 
+
 	addContentPath := contentPath + "test.txt"
 	cid, err := addContent(addContentPath, node, ctx)
 	if err != nil {
@@ -80,11 +81,19 @@ func main() {
 	fmt.Println("Content added with CID: " + cid)
 
 
+	/*
+
 	filePath, err := getContent(cid, node, ctx)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
+
+
+
+	 */
+
+
 
 }
 
@@ -159,7 +168,7 @@ func createNode(ctx context.Context, repo repo.Repo) (icore.CoreAPI, error) {
 	// Build configurations of the node
 	nodeOptions := &core.BuildCfg{
 		Online:  true,
-		Routing: libp2p.DHTOption, // This option sets the node to be a full DHT node (both fetching and storing DHT Records)
+		Routing: libp2p.DHTServerOption, // This option sets the node to be a full DHT node (both fetching and storing DHT Records)
 		// Routing: libp2p.DHTClientOption, // This option sets the node to be a client DHT node (only fetching records)
 		// There is also an option called: libp2p.DHTServerOption
 		Repo: repo,
