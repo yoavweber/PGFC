@@ -1,6 +1,7 @@
-package main
+package content
 
 import (
+	"PGFS/global"
 	"context"
 	"fmt"
 	files "github.com/ipfs/go-ipfs-files"
@@ -12,7 +13,7 @@ import (
 func getContent(cid string, node icore.CoreAPI, ctx context.Context) (string, error) {
 
 	var cidPath = path.New(cid)
-	outputPath := contentPath + cid // File output path
+	outputPath := global.ContentPath + cid // File output path
 
 	fileNode, err := node.Unixfs().Get(ctx, cidPath) // Gets the node associated with the CID given
 	if err != nil {
@@ -28,7 +29,7 @@ func getContent(cid string, node icore.CoreAPI, ctx context.Context) (string, er
 }
 
 
-func addContent(filePath string, node icore.CoreAPI, ctx context.Context) (string, error) {
+func AddContent(filePath string, node icore.CoreAPI, ctx context.Context) (string, error) {
 
 	someFile, err := getUnixfsNode(filePath)
 	if err != nil {

@@ -1,14 +1,15 @@
 package main
 
 import (
+	"PGFS/content"
+	"PGFS/global"
+	"PGFS/node"
+	"PGFS/peers"
 	"context"
 	"fmt"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 )
-
-const repoPath = "./.ipfs/"
-const contentPath = "./content/"
 
 func main() {
 
@@ -16,14 +17,14 @@ func main() {
 	defer cancel()
 
 	// Spawn a node using a temporary path, creating a temporary repo for the run
-	fmt.Println("Spawning node on " + repoPath)
+	fmt.Println("Spawning node on " + global.RepoPath)
 	node, err := spawnNode(ctx)
 	if err != nil {
 		panic(err)
 	}
 
 	// Node identity information
-	fmt.Println("Node spawned on " + repoPath + "\nIdentity information:")
+	fmt.Println("Node spawned on " + global.RepoPath + "\nIdentity information:")
 	key, _ := node.Key().Self(ctx)
 	fmt.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
 
@@ -31,7 +32,7 @@ func main() {
 		"/ip4/10.212.137.178/tcp/4001/p2p/12D3KooWDHfFVgZqgRBQRDkYVm9hV8KE6EiaDLTgobHWYn7M62tq",
 	}
 
-	go connectToPeers(ctx, node, bootstrapNodes)
+	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
 
 	/*
@@ -49,8 +50,8 @@ func main() {
 	 */
 
 
-	addContentPath := contentPath + "test.txt"
-	cid, err := addContent(addContentPath, node, ctx)
+	addContentPath := global.ContentPath + "test.txt"
+	cid, err := content.AddContent(addContentPath, node, ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -75,26 +76,26 @@ func main() {
 
 // Spawns a node
 func spawnNode(ctx context.Context) (icore.CoreAPI, error) {
-	if err := setupPlugins(""); err != nil {
+	if err := node.SetupPlugins(""); err != nil {
 		return nil, err
 	}
 
 	// Checks if repo is initialized
-	if !fsrepo.IsInitialized(repoPath) {
+	if !fsrepo.IsInitialized(global.RepoPath) {
 		// Initializes repo in repoPath
-		if err := repoInit(); err != nil {
+		if err := node.RepoInit(); err != nil {
 			return nil, err
 		}
 	}
 
 	// Opens the repo
-	nodeRepo, err := fsrepo.Open(repoPath)
+	nodeRepo, err := fsrepo.Open(global.RepoPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open repo on node creation: %s", err)
 	}
 
 	// Spawns an IPFS node
-	return createNode(ctx, nodeRepo)
+	return node.CreateNode(ctx, nodeRepo)
 
 }
 
