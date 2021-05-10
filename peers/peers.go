@@ -1,4 +1,4 @@
-package main
+package peers
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"sync"
 )
 
-func connectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) error {
+func ConnectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) error {
 	var wg sync.WaitGroup
 	peerInfos := make(map[peer.ID]*peerstore.PeerInfo, len(peers))
 	for _, addrStr := range peers {

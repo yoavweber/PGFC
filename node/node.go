@@ -1,6 +1,7 @@
-package main
+package node
 
 import (
+	"PGFS/global"
 	"context"
 	"fmt"
 	config "github.com/ipfs/go-ipfs-config"
@@ -15,7 +16,7 @@ import (
 	"path/filepath"
 )
 
-func setupPlugins(externalPluginsPath string) error {
+func SetupPlugins(externalPluginsPath string) error {
 	// Load any external plugins if available on externalPluginsPath
 	plugins, err := loader.NewPluginLoader(filepath.Join(externalPluginsPath, "plugins"))
 	if err != nil {
@@ -34,7 +35,7 @@ func setupPlugins(externalPluginsPath string) error {
 	return nil
 }
 
-func repoInit() error {
+func RepoInit() error {
 
 	// Create a config with default options and a 2048 bit key
 	cfg, err := config.Init(ioutil.Discard, 2048)
@@ -46,7 +47,7 @@ func repoInit() error {
 	cfg.Bootstrap = nil
 
 	// Create the repo with the config
-	err = fsrepo.Init(repoPath, cfg)
+	err = fsrepo.Init(global.RepoPath, cfg)
 	if err != nil {
 		return fmt.Errorf("failed to initialize repo: %s", err)
 	}
@@ -55,7 +56,7 @@ func repoInit() error {
 }
 
 // Creates an IPFS node and returns its coreAPI
-func createNode(ctx context.Context, repo repo.Repo) (icore.CoreAPI, error) {
+func CreateNode(ctx context.Context, repo repo.Repo) (icore.CoreAPI, error) {
 
 	// Build configurations of the node
 	nodeOptions := &core.BuildCfg{

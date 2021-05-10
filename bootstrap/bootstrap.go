@@ -1,14 +1,15 @@
-package main
+package bootstrap
 
 import (
+	"PGFS/global"
 	"fmt"
 	config "github.com/ipfs/go-ipfs-config"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 )
 
 func addBootstrap(addresses []string) error {
-	if fsrepo.IsInitialized(repoPath) { // Checks if repo is initialized
-		nodeRepo, err := fsrepo.Open(repoPath) // Opens repo
+	if fsrepo.IsInitialized(global.RepoPath) { // Checks if repo is initialized
+		nodeRepo, err := fsrepo.Open(global.RepoPath) // Opens repo
 		if err != nil {
 			return fmt.Errorf("failed to open repo when adding bootstrap: %s", err)
 		}
@@ -38,8 +39,8 @@ func removeBootstrap() {
 }
 
 func clearBootstrap() error {
-	if fsrepo.IsInitialized(repoPath) { // Checks if repo is initialized
-		nodeRepo, err := fsrepo.Open(repoPath) // Opens repo
+	if fsrepo.IsInitialized(global.RepoPath) { // Checks if repo is initialized
+		nodeRepo, err := fsrepo.Open(global.RepoPath) // Opens repo
 		if err != nil {
 			return fmt.Errorf("failed to open repo when adding bootstrap: %s", err)
 		}
