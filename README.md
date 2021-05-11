@@ -5,7 +5,7 @@ This application is based IPFS (InterPlanetary File System), and is intended to 
 Paraglider-flight files (in standardized format ".igc") are intended for sharing on a peer-to-peer basis.
 
 This program utilizes a specialized version of the go-implementation of IPFS - located at [go-pgfs](https://github.com/yoavweber/go-pgfs)<br>
-All licenses and dependencies from the original project have been preserved.
+All licenses and dependencies from the original project this repository has been forked from ([go-ipfs](https://github.com/ipfs/go-ipfs)) have been preserved.
 
 Further Project Progress Documentation is located further down in this README.
 
@@ -28,10 +28,12 @@ This program is initialized by docker-compose. The compose-file initiates three 
 * Some platform issues, we are a diverse group in terms of preferred OS. 1x Linux, 1x Windows, 1x macOS.
 ### The most challenging aspects
 * Here goes aspects of the project the group deemed most challenging.
+* Limited Resources - Little Info for IPFS due to the "newness" of the whole concept.
+* Platform-limiting factors, especially for Windows. NO info could be found regarding IPFS-development for Windows. All external development (used for help in most instances) is primarily executed in Linux.
 ### The learning outcome
 * What did we learn? IPFS being the obvious answer, but it may be worth adding stuff like interrogating a foreign repository to make it fit specialized needs.
 ### Total work hours
-For this project, a high focus on collaboration has been prioritized. For every week of the project period, the group has had 6-10 hours of collaborative work (usually 2-3 sessions per week). The sessions have mostly happened physically (on campus) and each session usually has had a specific purpose (some sprints, some commune problem solving). In addition to these teamwork-sessions, we also split some work, to increase the learning-outcome per individual group member. ----put some more later, but ground work has been laid ;)
+For this project, a high focus on collaboration has been prioritized. For every week of the project period, the group has had 6-10 hours of collaborative work (usually 2-3 sessions per week). The sessions have mostly happened physically (on campus) and each session usually has had a specific purpose (some sprints, some commune problem solving). In addition to these teamwork-sessions, we also split some work to work on an individual basis, to increase the learning-outcome per individual group member. ----put some more later, but ground work has been laid ;)
 
 
 
