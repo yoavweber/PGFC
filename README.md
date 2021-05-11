@@ -4,19 +4,19 @@ This project is built as (self)tasked in the course PROG2005 Cloud Technologies 
 This application is based IPFS (InterPlanetary File System), and is intended to be used by paragliders to share flight-info with each other, completely decentralized. The application in the current state is entirely backend-focused and is written in golang.
 Paraglider-flight files (in standardized format ".igc") are intended for sharing on a peer-to-peer basis.
 
-This project is directly forked from the go-implementation of IPFS - located at [go-ipfs](https://github.com/ipfs/go-ipfs)<br>
-All licenses and dependencies from the original project has been preserved.
+This program utilizes a specialized version of the go-implementation of IPFS - located at [go-pgfs](https://github.com/yoavweber/go-pgfs)<br>
+All licenses and dependencies from the original project this repository has been forked from ([go-ipfs](https://github.com/ipfs/go-ipfs)) have been preserved.
 
 Further Project Progress Documentation is located further down in this README.
 
 ## Features
-The program is directly based on IPFS, and all features from the go-implementation of IPFS ([go-ipfs](https://github.com/ipfs/go-ipfs)) is still operational. Additional features (as described in the project description) include:
+The program is directly utilizing a specialized version of IPFS (found at [go-pgfs](https://github.com/yoavweber/go-pgfs)), where all features from the go-implementation of IPFS ([go-ipfs](https://github.com/ipfs/go-ipfs)) are preserved, yet modified to fit the project case. Additional features (as described in the project description) include:
 * Uploading and downloading files is exclusive for files of the .igc-format (standardized file-format for paragliding flight-information)
-* Running the program initiates 3 PGFS-nodes for testing-purposes
+* Running the program through docker-compose initiates 3 PGFS-nodes for testing-purposes
 * Mother-node (main server bootstrap-node) is located on the internal NTNU-network. In practice, this means the program only works internally in the NTNU institutional network. To use your own server-node (for further development purposes), the bootstrap-node must be updated to coincide with your own server-node.
 
 ## Deployment
-This project is planned to be dockerized closer to due-date. More information coming soon!
+This program is initialized by docker-compose. The compose-file initiates three nodes within the pgfs-network. These nodes are of different classifications. One node is initialized as a server node (and is the main bootstrap), and the two other client-nodes. The two client nodes serve different purposes, one of them aims to upload a valid IGC-file, the other client-node fetches this file from the network.
 
 ## The Development Process (for assessment purposes)
 ### Original Project Plan
@@ -28,10 +28,12 @@ This project is planned to be dockerized closer to due-date. More information co
 * Some platform issues, we are a diverse group in terms of preferred OS. 1x Linux, 1x Windows, 1x macOS.
 ### The most challenging aspects
 * Here goes aspects of the project the group deemed most challenging.
+* Limited Resources - Little Info for IPFS due to the "newness" of the whole concept.
+* Platform-limiting factors, especially for Windows. NO info could be found regarding IPFS-development for Windows. All external development (used for help in most instances) is primarily executed in Linux.
 ### The learning outcome
 * What did we learn? IPFS being the obvious answer, but it may be worth adding stuff like interrogating a foreign repository to make it fit specialized needs.
 ### Total work hours
-For this project, a high focus on collaboration has been prioritized. For every week of the project period, the group has had 6-10 hours of collaborative work (usually 2-3 sessions per week). The sessions have mostly happened physically (on campus) and each session usually has had a specific purpose (some sprints, some commune problem solving). In addition to these teamwork-sessions, we also split some work, to increase the learning-outcome per individual group member. ----put some more later, but ground work has been laid ;)
+For this project, a high focus on collaboration has been prioritized. For every week of the project period, the group has had 6-10 hours of collaborative work (usually 2-3 sessions per week). The sessions have mostly happened physically (on campus) and each session usually has had a specific purpose (some sprints, some commune problem solving). In addition to these teamwork-sessions, we also split some work to work on an individual basis, to increase the learning-outcome per individual group member. ----put some more later, but ground work has been laid ;)
 
 
 
