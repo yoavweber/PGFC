@@ -46,6 +46,8 @@ func RepoInit() error {
 	// Assigns custom bootstrap to repo
 	cfg.Bootstrap = nil
 
+	cfg.Swarm.AddrFilters = nil
+
 	// Create the repo with the config
 	err = fsrepo.Init(global.RepoPath, cfg)
 	if err != nil {
@@ -56,17 +58,20 @@ func RepoInit() error {
 }
 
 // Creates an IPFS node and returns its coreAPI
-func CreateNode(ctx context.Context, repo repo.Repo) (icore.CoreAPI, error) {
+func CreateNode(ctx context.Context, repo repo.Repo, isServer bool) (icore.CoreAPI, error) {
+
 
 	// Build configurations of the node
 	nodeOptions := &core.BuildCfg{
 		Online:  true,
-		Routing: libp2p.DHTServerOption, // This option sets the node to be a full DHT node (both fetching and storing DHT Records)
-		// Routing: libp2p.DHTClientOption, // This option sets the node to be a client DHT node (only fetching records)
-		// There is also an option called: libp2p.DHTServerOption
 		Repo: repo,
 	}
 
+	if isServer {
+		nodeOptions.Routing = libp2p.DHTServerOption
+	} else {
+		nodeOptions.Routing = libp2p.DHTOption
+	}
 
 
 	// Creates new node

@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func getContent(cid string, node icore.CoreAPI, ctx context.Context) (string, error) {
+func GetContent(cid string, node icore.CoreAPI, ctx context.Context) (string, error) {
 
 	var cidPath = path.New(cid)
 	outputPath := global.ContentPath + cid // File output path

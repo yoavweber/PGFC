@@ -1,4 +1,4 @@
 package global
 
 const RepoPath = "./.ipfs/"
-const ContentPath = "./content/"
+const ContentPath = "./content/files/"

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"PGFS/content"
 	"PGFS/global"
 	"PGFS/node"
 	"PGFS/peers"
@@ -9,6 +8,7 @@ import (
 	"fmt"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
+	"time"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 
 	// Spawn a node using a temporary path, creating a temporary repo for the run
 	fmt.Println("Spawning node on " + global.RepoPath)
-	node, err := spawnNode(ctx)
+	node, err := spawnNode(ctx, false)
 	if err != nil {
 		panic(err)
 	}
@@ -35,22 +35,15 @@ func main() {
 	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
 
-	/*
-
-	cid := "QmRJE9bXiKrR3EZSmw9xYC1dGL8oK5NjTYkCGATw4Gq8rn"
-
-	filePath, err := getContent(cid, node, ctx)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
+	time.Sleep(100*time.Second)
 
 
 
-	 */
 
 
-	addContentPath := global.ContentPath + "test.txt"
+
+/*
+	addContentPath := global.ContentPath + "2021-04-11-XCT-XXX-02.igc"
 	cid, err := content.AddContent(addContentPath, node, ctx)
 	if err != nil {
 		panic(err)
@@ -58,6 +51,20 @@ func main() {
 	fmt.Println("Content added with CID: " + cid)
 
 
+ */
+
+
+/*
+	cid := "QmStSztqJrmaRVBcw1SbnNmw1Zd2D1YTfHowBFHMZPEVwh"
+
+	filePath, err := content.GetContent(cid, node, ctx)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
+
+
+ */
 	/*
 
 	filePath, err := getContent(cid, node, ctx)
@@ -75,7 +82,7 @@ func main() {
 }
 
 // Spawns a node
-func spawnNode(ctx context.Context) (icore.CoreAPI, error) {
+func spawnNode(ctx context.Context, isServer bool) (icore.CoreAPI, error) {
 	if err := node.SetupPlugins(""); err != nil {
 		return nil, err
 	}
@@ -95,7 +102,7 @@ func spawnNode(ctx context.Context) (icore.CoreAPI, error) {
 	}
 
 	// Spawns an IPFS node
-	return node.CreateNode(ctx, nodeRepo)
+	return node.CreateNode(ctx, nodeRepo, isServer)
 
 }
 
