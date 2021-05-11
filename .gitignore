@@ -24,6 +24,12 @@ Fetching
 .idea/**/misc.xml
 .idea/**/modules.xml
 .idea/**/vcs.xml
+# IPFS
+./.ipfs/
+./.ipfs/config
+./.ipfs/datastore_spec
+./.ipfs/swarm.key
+./.ipfs/version
 
 # Sensitive or high-churn files
 .idea/**/dataSources/

@@ -12,7 +12,9 @@ import (
 	"github.com/ipfs/go-ipfs/repo"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
+	"io"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -48,10 +50,31 @@ func RepoInit() error {
 
 	cfg.Swarm.AddrFilters = nil
 
+
 	// Create the repo with the config
 	err = fsrepo.Init(global.RepoPath, cfg)
 	if err != nil {
 		return fmt.Errorf("failed to initialize repo: %s", err)
+	}
+
+
+	swarmKeyPath := "./global/swarm.key"
+	if _, err := os.Stat(swarmKeyPath); os.IsNotExist(err) {
+		return fmt.Errorf("failed to locate swarm.key at %s: %s", swarmKeyPath, err)
+	}
+	swarmKeyIn, err := os.Open(swarmKeyPath)
+	if err != nil {
+		return fmt.Errorf("could not open ./global/swarm.key: %s", err)
+	}
+
+	swarmKeyOut, err := os.Create(global.RepoPath + "swarm.key")
+	if err != nil {
+		return fmt.Errorf("could not create %s swarm.key: %s", global.RepoPath, err)
+	}
+
+	_, err = io.Copy(swarmKeyOut, swarmKeyIn)
+	if err != nil {
+		return fmt.Errorf("could not copy swarm.key to new repo location: %s", err)
 	}
 
 	return nil

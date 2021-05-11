@@ -1,6 +1,7 @@
 package main
 
 import (
+	"PGFS/content"
 	"PGFS/global"
 	"PGFS/node"
 	"PGFS/peers"
@@ -29,20 +30,11 @@ func main() {
 	fmt.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
 
 	var bootstrapNodes = []string {
-		"/ip4/10.212.137.178/tcp/4001/p2p/12D3KooWDHfFVgZqgRBQRDkYVm9hV8KE6EiaDLTgobHWYn7M62tq",
+		"/ip4/10.22.201.110/tcp/4001/p2p/QmdoF64z3SrpWEJphCq3pPq5z3y5y3Gu2KePhFti6R7L9i",
 	}
 
 	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
-
-	time.Sleep(100*time.Second)
-
-
-
-
-
-
-/*
 	addContentPath := global.ContentPath + "2021-04-11-XCT-XXX-02.igc"
 	cid, err := content.AddContent(addContentPath, node, ctx)
 	if err != nil {
@@ -51,27 +43,37 @@ func main() {
 	fmt.Println("Content added with CID: " + cid)
 
 
- */
+	time.Sleep(30*time.Second)
+
+
+
+
+
 
 
 /*
-	cid := "QmStSztqJrmaRVBcw1SbnNmw1Zd2D1YTfHowBFHMZPEVwh"
 
-	filePath, err := content.GetContent(cid, node, ctx)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
+
 
 
  */
 	/*
+
+	cid := "QmXV4rfFBLbsM1q2TyzmEM8Pkb7Pp3dHAYf737ScSJQZcv"
+
+		filePath, err := content.GetContent(cid, node, ctx)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
+
 
 	filePath, err := getContent(cid, node, ctx)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
+
 
 
 
