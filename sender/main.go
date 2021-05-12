@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
+	"log"
 	"time"
 )
 
@@ -18,32 +19,39 @@ func main() {
 	defer cancel()
 
 	// Spawn a node using a temporary path, creating a temporary repo for the run
-	fmt.Println("Spawning node on " + global.RepoPath)
+	log.Println("Spawning node on " + global.RepoPath)
 	node, err := spawnNode(ctx, false)
 	if err != nil {
 		panic(err)
 	}
 
 	// Node identity information
-	fmt.Println("Node spawned on " + global.RepoPath + "\nIdentity information:")
+	log.Println("Node spawned on " + global.RepoPath + "\nIdentity information:")
 	key, _ := node.Key().Self(ctx)
-	fmt.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
+	log.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
 
 	var bootstrapNodes = []string {
-		"/ip4/10.22.201.110/tcp/4001/p2p/QmdoF64z3SrpWEJphCq3pPq5z3y5y3Gu2KePhFti6R7L9i",
+		"/ip4/10.22.201.110/tcp/4001/ipfs/Qme5aJduvtCwQ4Hojdvez9DA7FnqABo6wTeKTGtmEWGHDo",
 	}
+
+	time.Sleep(20*time.Second)
 
 	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
-	addContentPath := global.ContentPath + "2021-04-11-XCT-XXX-02.igc"
+	addContentPath := global.ContentPath + "test.txt"
 	cid, err := content.AddContent(addContentPath, node, ctx)
+	if err != nil {
+		log.Println(err)
+	}
+
+	addContentPath = global.ContentPath + "2021-04-11-XCT-XXX-02.igc"
+	cid, err = content.AddContent(addContentPath, node, ctx)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Content added with CID: " + cid)
+	log.Println("Content added with CID: " + cid)
 
-
-	time.Sleep(30*time.Second)
+	time.Sleep(150*time.Second)
 
 
 
@@ -59,7 +67,7 @@ func main() {
  */
 	/*
 
-	cid := "QmXV4rfFBLbsM1q2TyzmEM8Pkb7Pp3dHAYf737ScSJQZcv"
+		cid = "QmS98pgfsLTc91kjHDzb5V9nCwXbs9pe2h2Kj8zsVCXEmR"
 
 		filePath, err := content.GetContent(cid, node, ctx)
 		if err != nil {
@@ -68,7 +76,8 @@ func main() {
 		fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
 
 
-	filePath, err := getContent(cid, node, ctx)
+
+		filePath, err := getContent(cid, node, ctx)
 	if err != nil {
 		panic(err)
 	}
