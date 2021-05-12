@@ -49,7 +49,7 @@ func ConnectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) err
 }
 
 
-func listAllPeers(node icore.CoreAPI, ctx context.Context) ([]icore.ConnectionInfo, error) {
+func ListAllPeers(node icore.CoreAPI, ctx context.Context) ([]icore.ConnectionInfo, error) {
 
 	// Peer list
 	var list []icore.ConnectionInfo

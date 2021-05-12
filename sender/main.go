@@ -31,12 +31,15 @@ func main() {
 	log.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
 
 	var bootstrapNodes = []string {
-		"/ip4/10.22.201.110/tcp/4001/ipfs/Qme5aJduvtCwQ4Hojdvez9DA7FnqABo6wTeKTGtmEWGHDo",
+		"/ip4/server/tcp/4001/ipfs/QmNrv9UcFRhG6ToxcSAdvNBkPZZv3Yp8xvAFixnLHzCLow",
+		//"/ip4/10.22.201.110/tcp/4001/ipfs/QmXxHTom3PepoW3VrGDvmU89EKah8qRSsoZ1WLBki7w63i",
+		//10.212.139.99
 	}
 
-	time.Sleep(20*time.Second)
-
 	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
+
+	peerList, err := peers.ListAllPeers(node, ctx)
+	log.Println(peerList)
 
 	addContentPath := global.ContentPath + "test.txt"
 	cid, err := content.AddContent(addContentPath, node, ctx)
@@ -44,27 +47,15 @@ func main() {
 		log.Println(err)
 	}
 
-	addContentPath = global.ContentPath + "2021-04-11-XCT-XXX-02.igc"
+	addContentPath = global.ContentPath + "2021-05-12-XCT-XXX-01.igc"
 	cid, err = content.AddContent(addContentPath, node, ctx)
 	if err != nil {
 		panic(err)
 	}
 	log.Println("Content added with CID: " + cid)
 
-	time.Sleep(150*time.Second)
+	time.Sleep(10*time.Second)
 
-
-
-
-
-
-
-/*
-
-
-
-
- */
 	/*
 
 		cid = "QmS98pgfsLTc91kjHDzb5V9nCwXbs9pe2h2Kj8zsVCXEmR"
