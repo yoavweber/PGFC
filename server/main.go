@@ -30,12 +30,12 @@ func main() {
 	log.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
 
 	var bootstrapNodes = []string {
-		//"/ip4/10.22.201.110/tcp/4001/ipfs/Qme5aJduvtCwQ4Hojdvez9DA7FnqABo6wTeKTGtmEWGHDo",
+		//"/ip4/10.22.201.110/tcp/4001/ipfs/QmXFSSZsy9v1mB9Zhh8KSw6jxP9EFkmGKmALLnQB1c5UHD",
 	}
 
 	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
-	time.Sleep(150*time.Second)
+	time.Sleep(20*time.Second)
 
 
 }
