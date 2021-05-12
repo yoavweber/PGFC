@@ -49,7 +49,7 @@ func main() {
 		Connects to bootstrap node/s
 	*/
 
-	go peers.ConnectToPeers(ctx, node)
+	go peers.ConnectToPeers(ctx, node, nil)
 
 	/*
 		Retrieves the peer list

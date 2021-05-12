@@ -1,7 +1,6 @@
 package main
 
 import (
-	"PGFS/bootstrap"
 	"PGFS/content"
 	"PGFS/global"
 	"PGFS/node"
@@ -53,12 +52,7 @@ func main() {
 		global.DemoBootstrapNodeAddress,
 	}
 
-	err = bootstrap.AddBootstrap(bootstrapNodes)
-	if err != nil {
-		panic(err)
-	}
-
-	go peers.ConnectToPeers(ctx, node)
+	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
 	/*
 		Retrieves the peer list

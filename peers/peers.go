@@ -1,7 +1,6 @@
 package peers
 
 import (
-	"PGFS/bootstrap"
 	"PGFS/global"
 	"context"
 	"fmt"
@@ -18,11 +17,7 @@ import (
 /*
 	Connects to given peers, acts like a ipfs daemon
 */
-func ConnectToPeers(ctx context.Context, ipfs icore.CoreAPI) error {
-	peers, err := bootstrap.GetBootstrapList()
-	if err != nil {
-		return fmt.Errorf("failed to recieve peer list: %s", err)
-	}
+func ConnectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) error {
 
 	var wg sync.WaitGroup // Request wait group
 	peerInfos := make(map[peer.ID]*peerstore.PeerInfo, len(peers))
