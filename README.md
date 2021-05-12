@@ -20,11 +20,19 @@ This program is initialized by docker-compose. The compose-file initiates three 
 
 ## The Development Process (for assessment purposes)
 ### Original Project Plan
-* Brief description - may be redundant, as it is mostly stated in the project description and feature-set.
+The project idea consisted mainly of interrogating new technologies related to Cloud Technologies. Taking inspiration from a brief introduction in a lecture, IPFS was a topic that interested us greatly. We sought after getting to know this protocol better, on a deep and advanced level. The project seemed like a golden opportunity to explore more about this new type of technology. Learn about the IPFS-protocol and its functionality stood as a pillar for this project. The main plan consisted of:
+1. IPFS - Getting to know the protocol and its functionality
+2. IPFS - Interrogating the go-implementation of IPFS and customizing it for optimized functionality.
+3. Developing an OpenSource, completely decentralized, application, based on a specialized version of IPFS and its libraries, that will be used for sharing files between Paragliders. The idea of decentralization is forward-thinking, as we believe the future of the internet, and thus file-sharing, will be in a decentralized manner. IPFS and its protocols serve as a decentralized way of sharing files. This application-idea is inspired and pitched by Mariusz Nowostawski by NTNU Gjøvik.
 ### What went well
-* Here goes what has been implemented, what has the group learned from the experience?
+The group has had an incredible amount of learning-experience from working with an entirely foreign prospect for our project. The learning-curve has been steep, yet enriching. The program serves as a "proof of concept", but what has been developed has been thorougly thought through and tested. This project does not center itself around a program, but rather the learning experience of using new technologies. A thorough project-report is featured in the Wiki. <br>
+The technologies used for the program, have gone smoothly. We have:
+* Successfully deployed a working instance of the program on a PGFS-node within the NTNU OpenStack-network. Communication between local PGFS-nodes and the cloud-based server-PGFS-node is working perfectly.
+* Completely dockerized the "proof-of-concept"-program by utilizing docker-compose with 3 docker-containers (1 server-node + 2 client-nodes)
+* Learned a lot about IPFS, and its go-implementation.
+* -- more
 ### What didn't go as expected
-* Here goes issues - what was hard (getting to know IPFS on a deep level was both challenging and rewarding + took a lot of time (way more than expected in the proposed timeframe), write a paragraph or two on this)
+Getting to know IPFS on a deep level was both challenging and rewarding, and it was way more time-consuming than first estimated. The application serves as a "proof of concept" at this stage. The time usage within the proposed timeframe of the project mainly consisted of the group familiarizing themselves with IPFS and its protocols. This led to the development itself to slow down, as developing a program with IPFS requires a deep-level understanding of how it actually works. 
 * Some platform issues, we are a diverse group in terms of preferred OS. 1x Linux, 1x Windows, 1x macOS.
 ### The most challenging aspects
 * Here goes aspects of the project the group deemed most challenging.
