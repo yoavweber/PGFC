@@ -18,6 +18,9 @@ import (
 	"path/filepath"
 )
 
+/*
+	Sets up the plugins
+*/
 func SetupPlugins(externalPluginsPath string) error {
 	// Load any external plugins if available on externalPluginsPath
 	plugins, err := loader.NewPluginLoader(filepath.Join(externalPluginsPath, "plugins"))
@@ -37,6 +40,9 @@ func SetupPlugins(externalPluginsPath string) error {
 	return nil
 }
 
+/*
+	Initializes the repository at RepoPath
+*/
 func RepoInit() error {
 
 	// Create a config with default options and a 2048 bit key
@@ -45,11 +51,13 @@ func RepoInit() error {
 		return fmt.Errorf("failed to initialize repo config: %s", err)
 	}
 
-	// Assigns custom bootstrap to repo
+	// Removes all default bootstraps from list
+	// We connect to our bootstrap/s in main.go
 	cfg.Bootstrap = nil
 
+	// Removes address filters allowing for "local discovery" mode (file sharing through localhost)
+	// This should be changed to the default setting if one wishes to allow the node to discover nodes with IP address outside of it's own network
 	cfg.Swarm.AddrFilters = nil
-
 
 	// Create the repo with the config
 	err = fsrepo.Init(global.RepoPath, cfg)
@@ -57,21 +65,23 @@ func RepoInit() error {
 		return fmt.Errorf("failed to initialize repo: %s", err)
 	}
 
-
-	swarmKeyPath := "./global/swarm.key"
-	if _, err := os.Stat(swarmKeyPath); os.IsNotExist(err) {
-		return fmt.Errorf("failed to locate swarm.key at %s: %s", swarmKeyPath, err)
+	// Checks if swarm.key exists on it's defined SwarmKeyPath
+	if _, err := os.Stat(global.SwarmKeyPath); os.IsNotExist(err) {
+		return fmt.Errorf("failed to locate swarm.key at %s: %s", global.SwarmKeyPath, err)
 	}
-	swarmKeyIn, err := os.Open(swarmKeyPath)
+	// Current location of swarm.key
+	swarmKeyIn, err := os.Open(global.SwarmKeyPath)
 	if err != nil {
 		return fmt.Errorf("could not open ./global/swarm.key: %s", err)
 	}
 
+	// New location of swarm.key (In newly initialized repository)
 	swarmKeyOut, err := os.Create(global.RepoPath + "swarm.key")
 	if err != nil {
 		return fmt.Errorf("could not create %s swarm.key: %s", global.RepoPath, err)
 	}
 
+	// Copying swarm.key from old to new location
 	_, err = io.Copy(swarmKeyOut, swarmKeyIn)
 	if err != nil {
 		return fmt.Errorf("could not copy swarm.key to new repo location: %s", err)
@@ -80,22 +90,23 @@ func RepoInit() error {
 	return nil
 }
 
-// Creates an IPFS node and returns its coreAPI
+/*
+	Creates an IPFS node and returns its coreAPI (client)
+*/
 func CreateNode(ctx context.Context, repo repo.Repo, isServer bool) (icore.CoreAPI, error) {
-
 
 	// Build configurations of the node
 	nodeOptions := &core.BuildCfg{
-		Online:  true,
-		Repo: repo,
+		Online: true,
+		Repo:   repo,
 	}
 
+	// Checks if node wishes to be a DHT Server and sets routing appropriately
 	if isServer {
 		nodeOptions.Routing = libp2p.DHTServerOption
 	} else {
 		nodeOptions.Routing = libp2p.DHTOption
 	}
-
 
 	// Creates new node
 	node, err := core.NewNode(ctx, nodeOptions)

@@ -15,8 +15,10 @@ COPY go.mod go.sum /src/
 RUN go mod download && go mod graph | awk '{if ($1 !~ "@") print $2}' | xargs go get -v
 COPY .. /src/
 
-RUN go build ./server/main.go
-
+# For building separate docker images
+#RUN go build ./server/main.go
+#RUN go build ./sender/main.go
+#RUN go build ./reciever/main.go
 
 FROM alpine
 COPY --from=build /src/. .

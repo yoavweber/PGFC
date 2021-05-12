@@ -9,38 +9,72 @@ import (
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"log"
+	"strconv"
 	"time"
 )
 
 func main() {
 
+	/*
+		Initializes the context
+	*/
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Spawn a node using a temporary path, creating a temporary repo for the run
+	/*
+		Spawns a node
+	*/
 	log.Println("Spawning node on " + global.RepoPath)
-	node, err := spawnNode(ctx, true)
+	node, err := spawnNode(ctx, false)
 	if err != nil {
 		panic(err)
 	}
+	log.Println("Node spawned on " + global.RepoPath)
 
-	// Node identity information
-	log.Println("Node spawned on " + global.RepoPath + "\nIdentity information:")
-	key, _ := node.Key().Self(ctx)
-	log.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
+	log.Println("")
 
-	var bootstrapNodes = []string {
-		//"/ip4/10.22.201.110/tcp/4001/ipfs/QmXFSSZsy9v1mB9Zhh8KSw6jxP9EFkmGKmALLnQB1c5UHD",
+	/*
+		Node identity information
+	*/
+	id, err := peers.GetPeerID()
+	if err != nil {
+		panic(err)
+	}
+	log.Println("* Identity information:")
+	log.Println("* PeerID: " + id)
+
+	log.Println("")
+
+	/*
+		Connects to bootstrap node/s
+	*/
+
+	go peers.ConnectToPeers(ctx, node)
+
+	/*
+		Retrieves the peer list
+	*/
+	peerList, err := peers.ListAllPeers(node, ctx)
+	log.Println("? Peer list:")
+	if len(peerList) > 0 {
+		for i := range peerList {
+			var peer icore.ConnectionInfo
+			peer = peerList[i]
+			log.Println("? Peer #" + strconv.Itoa(i) + ": " + peer.ID().Pretty())
+			log.Println("?  Address: " + peer.Address().String())
+			log.Println("?  Direction: " + peer.Direction().String())
+		}
+	} else {
+		log.Println("!  No peers found :(")
 	}
 
-	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
-
-	time.Sleep(20*time.Second)
-
+	time.Sleep(10 * time.Second)
 
 }
 
-// Spawns a node
+/*
+	Spawns a node
+*/
 func spawnNode(ctx context.Context, isServer bool) (icore.CoreAPI, error) {
 	if err := node.SetupPlugins(""); err != nil {
 		return nil, err
@@ -64,6 +98,3 @@ func spawnNode(ctx context.Context, isServer bool) (icore.CoreAPI, error) {
 	return node.CreateNode(ctx, nodeRepo, isServer)
 
 }
-
-
-
