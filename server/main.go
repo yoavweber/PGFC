@@ -50,6 +50,8 @@ func main() {
 	*/
 
 	go peers.ConnectToPeers(ctx, node, nil)
+	log.Println("Connecting to the network..")
+	time.Sleep(6*time.Second)
 
 	/*
 		Retrieves the peer list

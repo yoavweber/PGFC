@@ -11,6 +11,7 @@ import (
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"log"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -52,8 +53,11 @@ func main() {
 		global.DemoBootstrapNodeAddress,
 	}
 
-	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
+
+	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
+	log.Println("Connecting to the network..")
+	time.Sleep(2*time.Second)
 	/*
 		Retrieves the peer list
 	*/
@@ -72,6 +76,8 @@ func main() {
 	}
 
 	log.Println("")
+
+	time.Sleep(5*time.Second)
 
 	/*
 		Gets file associated with the CID uploaded by the Sender node

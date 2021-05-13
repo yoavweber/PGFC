@@ -53,8 +53,11 @@ func main() {
 		global.DemoBootstrapNodeAddress,
 	}
 
-	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
+
+	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
+	log.Println("Connecting to the network..")
+	time.Sleep(2*time.Second)
 	/*
 		Retrieves the peer list
 	*/
@@ -95,7 +98,7 @@ func main() {
 
 	// Sleeps to keep connection between bootstrap node
 	// allowing for the Reciever node to get the uploaded file
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 
 }
 

@@ -6,7 +6,7 @@ services:
     image: miloszaw/pgfs:server
     #build:
     #  context: ./
-    #  dockerfile: ./server/Dockerfile
+    #  dockerfile: server/Dockerfile
     expose:
       - "80"
     ports:
@@ -28,7 +28,7 @@ services:
     image: miloszaw/pgfs:reciever
     #build:
     #  context: ./
-    #  dockerfile: Dockerfile
+    #  dockerfile: reciever/Dockerfile
     expose:
       - "82"
     ports:
