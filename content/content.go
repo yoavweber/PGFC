@@ -7,7 +7,11 @@ import (
 	files "github.com/ipfs/go-ipfs-files"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/ipfs/interface-go-ipfs-core/path"
+	"io"
+	"io/ioutil"
 	"os"
+	"strconv"
+	"time"
 )
 
 /*
@@ -37,17 +41,78 @@ func GetContent(cid string, node icore.CoreAPI, ctx context.Context) (string, er
 */
 func AddContent(filePath string, node icore.CoreAPI, ctx context.Context) (string, error) {
 
-	someFile, err := getUnixfsNode(filePath) // Creates a Unixfs Node of the given filePath
-	if err != nil {
-		return "", fmt.Errorf("could not get File: %s", err)
-	}
+	someFile, dir, err := WrapContent(filePath) // Wraps content and opens it as a file
 
 	cidFile, err := node.Unixfs().Add(ctx, someFile) // Adds the Unixfs Node to the nodes datastore
-	if err != nil {
+
+	someFile.Close() // closes file
+
+	if err != nil { // Content could not be added, error occured
+		err = os.RemoveAll(dir) // Attempts to remove temp dir
+		if err != nil {
+			panic(fmt.Errorf("failed to remove temp package wrapper: %s", err)) // error occured whilst removing temp dir, PANIC!!!
+		}
 		return "", fmt.Errorf("could not add File: %s", err)
 	}
 
+	err = os.RemoveAll(dir)
+	if err != nil {
+		return "", fmt.Errorf("failed to remove temp package wrapper: %s", err)
+	}
+
 	return cidFile.Cid().String(), nil
+}
+
+/*
+	Wraps the content attaching a metadata.txt file to it for searching purposes
+ */
+func WrapContent(filePath string) (files.Node, string, error) {
+
+	stamp := int(time.Now().UnixNano() / int64(time.Millisecond)) // Creates unique stamp
+	time.Sleep(1*time.Millisecond) // Assure uniqueness
+	dir := global.TempContentPath + "pkg" + strconv.Itoa(stamp) + "/" // Temp wrapper dir path
+
+	err := os.Mkdir(dir, 0755) // Makes temp package dir on dir path
+	if err != nil {
+		return nil, dir, fmt.Errorf("failed creating wrapper package: %s", err)
+	}
+
+	fileIn, err := os.Open(filePath) // Opens the given file
+	if err != nil {
+		return nil, dir, fmt.Errorf("failed opening given file: %s", err)
+	}
+
+	fileOut, err := os.Create(dir + "data.igc") // Creates a data.igc file in the package directory
+	if err != nil {
+		fileIn.Close()
+		return nil, dir, fmt.Errorf("failed creating data.igc file: %s", err)
+	}
+
+	_, err = io.Copy(fileOut, fileIn) // Copies the file into the temporary package directory
+	if err != nil {
+		fileIn.Close() // Closes file
+		fileOut.Close()
+		return nil, dir, fmt.Errorf("failed copying file to wrapper: %s", err)
+	}
+
+	fileIn.Close() // Closes file
+	fileOut.Close()
+
+	err = ioutil.WriteFile(dir + "metadata.txt", nil, 0755) // Creates a metadata file
+	if err != nil {
+		return nil, dir, fmt.Errorf("failed creating metadata file: %s", err)
+	}
+
+	/*
+		TODO: This is where you'd parse the .IGC file and write relevant data to the metadata file
+	 */
+
+	someFile, err := getUnixfsNode(dir) // Creates a Unixfs Node of the given filePath
+	if err != nil {
+		return nil, dir, fmt.Errorf("could not get File: %s", err)
+	}
+
+	return someFile, dir, nil
 }
 
 /*
