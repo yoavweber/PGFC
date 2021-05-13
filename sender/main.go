@@ -10,80 +10,98 @@ import (
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"log"
+	"strconv"
 	"time"
 )
 
 func main() {
 
+	/*
+		Initializes the context
+	*/
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Spawn a node using a temporary path, creating a temporary repo for the run
+	/*
+		Spawns a node
+	*/
 	log.Println("Spawning node on " + global.RepoPath)
 	node, err := spawnNode(ctx, false)
 	if err != nil {
 		panic(err)
 	}
+	log.Println("Node spawned on " + global.RepoPath)
 
-	// Node identity information
-	log.Println("Node spawned on " + global.RepoPath + "\nIdentity information:")
-	key, _ := node.Key().Self(ctx)
-	log.Println(" PeerID: " + key.ID().Pretty() + "\n Path: " + key.Path().String())
+	log.Println("")
 
-	var bootstrapNodes = []string {
-		"/ip4/server/tcp/4001/ipfs/QmNrv9UcFRhG6ToxcSAdvNBkPZZv3Yp8xvAFixnLHzCLow",
-		//"/ip4/10.22.201.110/tcp/4001/ipfs/QmXxHTom3PepoW3VrGDvmU89EKah8qRSsoZ1WLBki7w63i",
-		//10.212.139.99
+	/*
+		Node identity information
+	*/
+	id, err := peers.GetPeerID()
+	if err != nil {
+		panic(err)
+	}
+	log.Println("* Identity information:")
+	log.Println("* PeerID: " + id)
+
+	log.Println("")
+
+	/*
+		Connects to bootstrap node/s
+	*/
+	var bootstrapNodes = []string{
+		global.DemoBootstrapNodeAddress,
 	}
 
 	go peers.ConnectToPeers(ctx, node, bootstrapNodes)
 
+	/*
+		Retrieves the peer list
+	*/
 	peerList, err := peers.ListAllPeers(node, ctx)
-	log.Println(peerList)
+	log.Println("? Peer list:")
+	if len(peerList) > 0 {
+		for i := range peerList {
+			var peer icore.ConnectionInfo
+			peer = peerList[i]
+			log.Println("? Peer #" + strconv.Itoa(i) + ": " + peer.ID().Pretty())
+			log.Println("?  Address: " + peer.Address().String())
+			log.Println("?  Direction: " + peer.Direction().String())
+		}
+	} else {
+		log.Println("!  No peers found :(")
+	}
 
+	log.Println("")
+
+	/*
+		Attempts to add invalid content to the network
+	*/
 	addContentPath := global.ContentPath + "test.txt"
 	cid, err := content.AddContent(addContentPath, node, ctx)
 	if err != nil {
 		log.Println(err)
 	}
 
-	addContentPath = global.ContentPath + "2021-05-12-XCT-XXX-01.igc"
+	/*
+		Adds valid content to the network
+	*/
+	addContentPath = global.ContentPath + global.DemoFileToUpload
 	cid, err = content.AddContent(addContentPath, node, ctx)
 	if err != nil {
 		panic(err)
 	}
 	log.Println("Content added with CID: " + cid)
 
-	time.Sleep(10*time.Second)
-
-	/*
-
-		cid = "QmS98pgfsLTc91kjHDzb5V9nCwXbs9pe2h2Kj8zsVCXEmR"
-
-		filePath, err := content.GetContent(cid, node, ctx)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
-
-
-
-		filePath, err := getContent(cid, node, ctx)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Content with CID: " + cid + "\nreceived and written to " + filePath)
-
-
-
-
-	 */
-
-
+	// Sleeps to keep connection between bootstrap node
+	// allowing for the Reciever node to get the uploaded file
+	time.Sleep(5 * time.Second)
 
 }
 
-// Spawns a node
+/*
+	Spawns a node
+*/
 func spawnNode(ctx context.Context, isServer bool) (icore.CoreAPI, error) {
 	if err := node.SetupPlugins(""); err != nil {
 		return nil, err
@@ -107,8 +125,3 @@ func spawnNode(ctx context.Context, isServer bool) (icore.CoreAPI, error) {
 	return node.CreateNode(ctx, nodeRepo, isServer)
 
 }
-
-
-
-
-

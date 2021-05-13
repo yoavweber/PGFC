@@ -14,8 +14,12 @@ import (
 	"sync"
 )
 
+/*
+	Connects to given peers, acts like a ipfs daemon
+*/
 func ConnectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) error {
-	var wg sync.WaitGroup
+
+	var wg sync.WaitGroup // Request wait group
 	peerInfos := make(map[peer.ID]*peerstore.PeerInfo, len(peers))
 	for _, addrStr := range peers {
 		addr, err := ma.NewMultiaddr(addrStr)
@@ -34,11 +38,11 @@ func ConnectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) err
 		pi.Addrs = append(pi.Addrs, pii.Addrs...)
 	}
 
-	wg.Add(len(peerInfos))
+	wg.Add(len(peerInfos)) // Adds peers to wait group
 	for _, peerInfo := range peerInfos {
 		go func(peerInfo *peerstore.PeerInfo) {
 			defer wg.Done()
-			err := ipfs.Swarm().Connect(ctx, *peerInfo)
+			err := ipfs.Swarm().Connect(ctx, *peerInfo) // Established a connection between each listed peer
 			if err != nil {
 				log.Printf("failed to connect to %s: %s", peerInfo.ID, err)
 			}
@@ -48,18 +52,22 @@ func ConnectToPeers(ctx context.Context, ipfs icore.CoreAPI, peers []string) err
 	return nil
 }
 
-
+/*
+	Lists all peers on the current network
+*/
 func ListAllPeers(node icore.CoreAPI, ctx context.Context) ([]icore.ConnectionInfo, error) {
 
-	// Peer list
-	var list []icore.ConnectionInfo
+	var list []icore.ConnectionInfo // Peer list
 
 	list, err := node.Swarm().Peers(ctx) // Swarm peers
 
 	return list, err
 }
 
-func GetIdentity(node icore.CoreAPI, ctx context.Context) (string,error) {
+/*
+	Retrieves the PeerID of current initialized repository
+*/
+func GetPeerID() (string, error) {
 	// Node identity information
 	if fsrepo.IsInitialized(global.RepoPath) { // Checks if repo is initialized
 		nodeRepo, err := fsrepo.Open(global.RepoPath) // Opens repo
@@ -68,12 +76,12 @@ func GetIdentity(node icore.CoreAPI, ctx context.Context) (string,error) {
 
 		cfg, err = nodeRepo.Config() // Receives current config
 		if err != nil {
-			return "", fmt.Errorf("failed to open repo when adding bootstrap: %s", err)
+			return "", fmt.Errorf("failed to open repo when getting PeerID: %s", err)
 		}
 
 		return cfg.Identity.PeerID, nil
 	} else {
-		return "", fmt.Errorf("cannot add bootstrap to an uninitialized node")
+		return "", fmt.Errorf("cannot get PeerID from an uninitialized node")
 	}
 
 }
