@@ -4,14 +4,16 @@ import (
 	"PGFS/global"
 	"context"
 	"fmt"
-	files "github.com/ipfs/go-ipfs-files"
-	icore "github.com/ipfs/interface-go-ipfs-core"
-	"github.com/ipfs/interface-go-ipfs-core/path"
 	"io"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"time"
+
+	files "github.com/ipfs/go-ipfs-files"
+	icore "github.com/ipfs/interface-go-ipfs-core"
+	"github.com/ipfs/interface-go-ipfs-core/path"
+	igc "github.com/marni/goigc"
 )
 
 /*
@@ -65,11 +67,11 @@ func AddContent(filePath string, node icore.CoreAPI, ctx context.Context) (strin
 
 /*
 	Wraps the content attaching a metadata.txt file to it for searching purposes
- */
+*/
 func WrapContent(filePath string) (files.Node, string, error) {
 
-	stamp := int(time.Now().UnixNano() / int64(time.Millisecond)) // Creates unique stamp
-	time.Sleep(1*time.Millisecond) // Assure uniqueness
+	stamp := int(time.Now().UnixNano() / int64(time.Millisecond))     // Creates unique stamp
+	time.Sleep(1 * time.Millisecond)                                  // Assure uniqueness
 	dir := global.TempContentPath + "pkg" + strconv.Itoa(stamp) + "/" // Temp wrapper dir path
 
 	err := os.Mkdir(dir, 0755) // Makes temp package dir on dir path
@@ -98,14 +100,15 @@ func WrapContent(filePath string) (files.Node, string, error) {
 	fileIn.Close() // Closes file
 	fileOut.Close()
 
-	err = ioutil.WriteFile(dir + "metadata.txt", nil, 0755) // Creates a metadata file
+	track, err := igc.ParseLocation(filePath) // getting the location igc
+	fileData := fmt.Sprintf("Pilot: %s, gliderType: %s, date: %s",
+		track.Pilot, track.GliderType, track.Date.String())
+
+	err = ioutil.WriteFile(dir+"metadata.txt", []byte(fileData), 0755) // Creates a metadata file with the location
+
 	if err != nil {
 		return nil, dir, fmt.Errorf("failed creating metadata file: %s", err)
 	}
-
-	/*
-		TODO: This is where you'd parse the .IGC file and write relevant data to the metadata file
-	 */
 
 	someFile, err := getUnixfsNode(dir) // Creates a Unixfs Node of the given filePath
 	if err != nil {
