@@ -13,4 +13,4 @@ require (
 	github.com/multiformats/go-multiaddr v0.3.1
 )
 
-replace github.com/ipfs/go-ipfs => github.com/yoavweber/go-pgfs v0.8.1-0.20210515123719-b7979e958e3f
+replace github.com/ipfs/go-ipfs => github.com/yoavweber/go-pgfs v0.8.1-0.20210515185130-524bcb2b929b
