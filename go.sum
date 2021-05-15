@@ -1166,8 +1166,8 @@ github.com/whyrusleeping/timecache v0.0.0-20160911033111-cfcb2f1abfee/go.mod h1:
 github.com/x-cray/logrus-prefixed-formatter v0.5.2/go.mod h1:2duySbKsL6M18s5GU7VPsoEPHyzalCE06qoARUCeBBE=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
-github.com/yoavweber/go-pgfs v0.8.1-0.20210515123719-b7979e958e3f h1:dFCeKQld+aDD8VzaXVx9hF5NbsxNlHH3S07rBk15PpY=
-github.com/yoavweber/go-pgfs v0.8.1-0.20210515123719-b7979e958e3f/go.mod h1:yhMQsgtYu+SsJYJwTJP+pIdRrM4Ept3BPA+GznAL08Q=
+github.com/yoavweber/go-pgfs v0.8.1-0.20210515140448-e5a0348698dc h1:2pkGCQOB9CxJAIyq/1NLVm/YuAEd7gC8JxZKYVL0EQI=
+github.com/yoavweber/go-pgfs v0.8.1-0.20210515140448-e5a0348698dc/go.mod h1:yhMQsgtYu+SsJYJwTJP+pIdRrM4Ept3BPA+GznAL08Q=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/ziutek/mymysql v0.0.0-20170328153653-1d19cbf98d83/go.mod h1:LMSpPZ6DbqWFxNCHW77HeMg9I646SAhApZ/wKdgO/C0=
