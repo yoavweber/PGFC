@@ -50,9 +50,9 @@ func AddContent(filePath string, node icore.CoreAPI, ctx context.Context) (strin
 	someFile.Close() // closes file
 
 	if err != nil { // Content could not be added, error occured
-		err = os.RemoveAll(dir) // Attempts to remove temp dir
-		if err != nil {
-			panic(fmt.Errorf("failed to remove temp package wrapper: %s", err)) // error occured whilst removing temp dir, PANIC!!!
+		osErr := os.RemoveAll(dir) // Attempts to remove temp dir
+		if osErr != nil {
+			panic(fmt.Errorf("failed to remove temp package wrapper: %s", osErr)) // error occured whilst removing temp dir, PANIC!!!
 		}
 		return "", fmt.Errorf("could not add File: %s", err)
 	}
