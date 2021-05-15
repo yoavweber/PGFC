@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	"path/filepath"
+
 	files "github.com/ipfs/go-ipfs-files"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/ipfs/interface-go-ipfs-core/path"
@@ -43,8 +45,7 @@ func GetContent(cid string, node icore.CoreAPI, ctx context.Context) (string, er
 */
 func AddContent(filePath string, node icore.CoreAPI, ctx context.Context) (string, error) {
 
-	someFile, dir, err := WrapContent(filePath) // Wraps content and opens it as a file
-
+	someFile, dir, err := WrapContent(filePath)      // Wraps content and opens it as a file
 	cidFile, err := node.Unixfs().Add(ctx, someFile) // Adds the Unixfs Node to the nodes datastore
 
 	someFile.Close() // closes file
@@ -74,6 +75,8 @@ func WrapContent(filePath string) (files.Node, string, error) {
 	time.Sleep(1 * time.Millisecond)                                  // Assure uniqueness
 	dir := global.TempContentPath + "pkg" + strconv.Itoa(stamp) + "/" // Temp wrapper dir path
 
+	fileName := filepath.Base(filePath)
+
 	err := os.Mkdir(dir, 0755) // Makes temp package dir on dir path
 	if err != nil {
 		return nil, dir, fmt.Errorf("failed creating wrapper package: %s", err)
@@ -84,7 +87,7 @@ func WrapContent(filePath string) (files.Node, string, error) {
 		return nil, dir, fmt.Errorf("failed opening given file: %s", err)
 	}
 
-	fileOut, err := os.Create(dir + "data.igc") // Creates a data.igc file in the package directory
+	fileOut, err := os.Create(dir + fileName) // Creates a data.igc file in the package directory
 	if err != nil {
 		fileIn.Close()
 		return nil, dir, fmt.Errorf("failed creating data.igc file: %s", err)
