@@ -4,16 +4,13 @@ import (
 	"PGFS/global"
 	"context"
 	"fmt"
-	"io"
-	"io/ioutil"
-	"os"
-	"strconv"
-	"time"
-
 	files "github.com/ipfs/go-ipfs-files"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/ipfs/interface-go-ipfs-core/path"
 	igc "github.com/marni/goigc"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 /*
@@ -70,41 +67,30 @@ func AddContent(filePath string, node icore.CoreAPI, ctx context.Context) (strin
 */
 func WrapContent(filePath string) (files.Node, string, error) {
 
-	stamp := int(time.Now().UnixNano() / int64(time.Millisecond))     // Creates unique stamp
-	time.Sleep(1 * time.Millisecond)                                  // Assure uniqueness
-	dir := global.TempContentPath + "pkg" + strconv.Itoa(stamp) + "/" // Temp wrapper dir path
+	//stamp := int(time.Now().UnixNano() / int64(time.Millisecond))     // Creates unique stamp
+	//time.Sleep(1 * time.Millisecond)                                  // Assure uniqueness
+	//dir :=  + "pkg" + strconv.Itoa(stamp) + "/" // Temp wrapper dir path
 
-	err := os.Mkdir(dir, 0755) // Makes temp package dir on dir path
+	dir, err := ioutil.TempDir(global.TempContentPath, "tmp") // Makes temp package dir on dir path
 	if err != nil {
 		return nil, dir, fmt.Errorf("failed creating wrapper package: %s", err)
 	}
 
-	fileIn, err := os.Open(filePath) // Opens the given file
+	input, err := ioutil.ReadFile(filePath) // Opens the given file
 	if err != nil {
 		return nil, dir, fmt.Errorf("failed opening given file: %s", err)
 	}
 
-	fileOut, err := os.Create(dir + "data.igc") // Creates a data.igc file in the package directory
+	err = ioutil.WriteFile(dir + "\\" + filepath.Base(filePath), input, 0755) // Copies the file into the temporary package directory
 	if err != nil {
-		fileIn.Close()
-		return nil, dir, fmt.Errorf("failed creating data.igc file: %s", err)
-	}
-
-	_, err = io.Copy(fileOut, fileIn) // Copies the file into the temporary package directory
-	if err != nil {
-		fileIn.Close() // Closes file
-		fileOut.Close()
 		return nil, dir, fmt.Errorf("failed copying file to wrapper: %s", err)
 	}
-
-	fileIn.Close() // Closes file
-	fileOut.Close()
 
 	track, err := igc.ParseLocation(filePath) // getting the location igc
 	fileData := fmt.Sprintf("Pilot: %s, gliderType: %s, date: %s",
 		track.Pilot, track.GliderType, track.Date.String())
 
-	err = ioutil.WriteFile(dir+"metadata.txt", []byte(fileData), 0755) // Creates a metadata file with the location
+	err = ioutil.WriteFile(dir + "\\" + "metadata.txt", []byte(fileData), 0755) // Creates a metadata file with the location
 
 	if err != nil {
 		return nil, dir, fmt.Errorf("failed creating metadata file: %s", err)
