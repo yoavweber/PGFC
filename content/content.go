@@ -8,8 +8,9 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
-	"strings"
 	"time"
+
+	"path/filepath"
 
 	files "github.com/ipfs/go-ipfs-files"
 	icore "github.com/ipfs/interface-go-ipfs-core"
@@ -74,8 +75,7 @@ func WrapContent(filePath string) (files.Node, string, error) {
 	time.Sleep(1 * time.Millisecond)                                  // Assure uniqueness
 	dir := global.TempContentPath + "pkg" + strconv.Itoa(stamp) + "/" // Temp wrapper dir path
 
-	pathArray := strings.Split(filePath, "/")
-	fileName := pathArray[len(pathArray)-1]
+	fileName := filepath.Base(filePath)
 
 	err := os.Mkdir(dir, 0755) // Makes temp package dir on dir path
 	if err != nil {
