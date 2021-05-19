@@ -7,7 +7,7 @@ Paraglider-flight files (in standardized format ".igc") are intended for sharing
 This program utilizes a specialized version of the go-implementation of IPFS - located at [go-pgfs](https://github.com/yoavweber/go-pgfs) <br>
 All licenses and dependencies from the original project this repository has been forked from ([go-ipfs](https://github.com/ipfs/go-ipfs)) have been preserved.
 
-Further Project Progress Documentation is located in the (Project Wiki)[https://github.com/yoavweber/PGFS/wiki].
+Further Project Progress Documentation is located in the [Project Wiki](https://github.com/yoavweber/PGFS/wiki).
 
 ## Features
 The program is directly utilizing a specialized version of IPFS (found at [go-pgfs](https://github.com/yoavweber/go-pgfs)), where all features from the go-implementation of IPFS ([go-ipfs](https://github.com/ipfs/go-ipfs)) are preserved, yet some modified to fit the project case. Additional features include:
@@ -18,11 +18,11 @@ The program is directly utilizing a specialized version of IPFS (found at [go-pg
 ## Deployment
 This program is initialized by docker-compose. The compose-file initiates three containers, each containing a node initialized to the pgfs-network. These nodes are of different classifications. One node is initialized as a server node (and is the main bootstrap), and the two other client-nodes. The two client nodes serve different purposes, one of them aims to upload a valid IGC-file, the other client-node fetches this file from the network.
 
-For a more detailed look at how the program is implemented, and how to run the program, look into the "Deployment"-section of our (Project Report)[https://github.com/yoavweber/PGFS/wiki/Project-Report]
+For a more detailed look at how the program is implemented, and how to run the program, look into the "Deployment"-section of our [Project Report](https://github.com/yoavweber/PGFS/wiki/Project-Report)
 
 ## Project Assessment
 This project is scheduled for OpenSource Development after the project-period period has ended. 
-For assessing project-work in the course of Cloud Technologies, please visit the Wiki. In the wiki, you will find important documents from the development-process, as well as comprehensive project reports. The "Project Report" will serve as the main assessment-point for the Spring 2021 "Cloud Technologies" project (due to the major differences in development, contra the more streamlined development of REST-applications in Go). Read the Project Report in the wiki to assert our project. Please defer to the (wiki)[https://github.com/yoavweber/PGFS/wiki] for further information.
+For assessing project-work in the course of Cloud Technologies, please visit the Wiki. In the wiki, you will find important documents from the development-process, as well as comprehensive project reports. The "Project Report" will serve as the main assessment-point for the Spring 2021 "Cloud Technologies" project (due to the major differences in development, contra the more streamlined development of REST-applications in Go). Read the Project Report in the wiki to assert our project. Please defer to the [wiki](https://github.com/yoavweber/PGFS/wiki) for further information.
 
 <br>Authored by<br>
 <b>Yoav Weber</b><br>
